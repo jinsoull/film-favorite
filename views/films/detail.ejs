@@ -1,0 +1,32 @@
+<%- include('../partials/header') %>
+
+<a href="/films" class="back">&larr; Kembali ke daftar</a>
+
+<section class="card detail">
+  <div class="detail-poster">
+    <span class="detail-initial"><%= film.judul.charAt(0).toUpperCase() %></span>
+    <span class="detail-score">&#9733; <%= Number(film.rating).toFixed(1) %></span>
+  </div>
+
+  <div class="detail-body">
+    <span class="chip"><%= film.genre %></span>
+    <h1><%= film.judul %></h1>
+
+    <dl class="detail-list">
+      <div><dt>Sutradara</dt><dd><%= film.sutradara %></dd></div>
+      <div><dt>Tahun Rilis</dt><dd><%= film.tahun %></dd></div>
+      <div><dt>Rating</dt><dd><%= Number(film.rating).toFixed(1) %> / 10</dd></div>
+      <div><dt>Ditambahkan</dt><dd><%= new Date(film.created_at).toLocaleString('id-ID') %></dd></div>
+    </dl>
+
+    <div class="detail-actions">
+      <a class="btn btn-teal" href="/films/<%= film.id %>/edit">Edit Film</a>
+      <form action="/films/<%= film.id %>/hapus" method="POST"
+            onsubmit="return confirm('Yakin mau menghapus film ini?');">
+        <button class="btn btn-danger" type="submit">Hapus Film</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/footer') %>

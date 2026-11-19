@@ -1,0 +1,98 @@
+<%- include('../partials/header') %>
+
+<%
+  const total = films.length;
+  const rataRata = total
+    ? (films.reduce((jml, f) => jml + Number(f.rating), 0) / total).toFixed(1)
+    : '0.0';
+  const terbaik = total
+    ? films.reduce((a, b) => (Number(b.rating) > Number(a.rating) ? b : a))
+    : null;
+%>
+
+<section class="hero">
+  <div>
+    <p class="eyebrow">Koleksi Pribadi</p>
+    <h1>Daftar Film Favorit</h1>
+    <p class="hero-sub">Catat, ubah, dan kelola film-film yang paling kamu suka.</p>
+  </div>
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-num"><%= total %></span>
+      <span class="stat-label">Film<%= q ? ' ditemukan' : '' %></span>
+    </div>
+    <div class="stat">
+      <span class="stat-num"><%= rataRata %></span>
+      <span class="stat-label">Rata-rata rating</span>
+    </div>
+    <div class="stat stat-wide">
+      <span class="stat-num stat-text"><%= terbaik ? terbaik.judul : '-' %></span>
+      <span class="stat-label">Rating tertinggi</span>
+    </div>
+  </div>
+</section>
+
+<% if (pesan) { %>
+  <div class="alert alert-success"><%= pesan %></div>
+<% } %>
+
+<section class="card">
+  <div class="card-head">
+    <form class="search" action="/films" method="GET">
+      <input type="text" name="q" value="<%= q %>" placeholder="Cari judul, sutradara, atau genre...">
+      <button class="btn btn-teal" type="submit">Cari</button>
+      <% if (q) { %><a class="btn btn-ghost" href="/films">Reset</a><% } %>
+    </form>
+    <a href="/films/tambah" class="btn btn-primary">+ Tambah Film</a>
+  </div>
+
+  <% if (total === 0) { %>
+    <div class="empty">
+      <div class="empty-icon">&#127916;</div>
+      <p><%= q ? 'Film dengan kata kunci "' + q + '" tidak ditemukan.' : 'Belum ada film. Yuk tambahkan film favorit pertamamu!' %></p>
+    </div>
+  <% } else { %>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Judul</th>
+            <th>Sutradara</th>
+            <th>Genre</th>
+            <th>Tahun</th>
+            <th>Rating</th>
+            <th class="th-aksi">Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% films.forEach((film, i) => { %>
+            <tr>
+              <td class="muted"><%= i + 1 %></td>
+              <td class="judul"><a href="/films/<%= film.id %>"><%= film.judul %></a></td>
+              <td><%= film.sutradara %></td>
+              <td><span class="chip"><%= film.genre %></span></td>
+              <td><%= film.tahun %></td>
+              <td>
+                <div class="rating">
+                  <span class="rating-num">&#9733; <%= Number(film.rating).toFixed(1) %></span>
+                  <span class="rating-bar"><span style="width: <%= Number(film.rating) * 10 %>%"></span></span>
+                </div>
+              </td>
+              <td class="aksi">
+                <a class="btn btn-sm btn-ghost" href="/films/<%= film.id %>">Detail</a>
+                <a class="btn btn-sm btn-teal" href="/films/<%= film.id %>/edit">Edit</a>
+                <form action="/films/<%= film.id %>/hapus" method="POST"
+                      onsubmit="return confirm('Yakin mau menghapus film ini?');">
+                  <button class="btn btn-sm btn-danger" type="submit">Hapus</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  <% } %>
+</section>
+
+<%- include('../partials/footer') %>
